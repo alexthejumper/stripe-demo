@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe Checkout</title>
+</head>
+<body>
+<h1>Stripe Checkout</h1>
+<button id="checkout-button">Checkout</button>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe('pk_test_51PHmOlRvZfIIsZtQOAxNcYeEQyDXzI3Kczwsjpxz8JZGJlMfy9NuHygUTTfsM0eUFxjkA9S4m2Dedl1S4UHtwL2h00sgFlEUh2'); // Replace with your test public key
+
+  const checkoutButton = document.getElementById('checkout-button');
+
+  checkoutButton.addEventListener('click', () => {
+    fetch('/api/stripe/create-checkout-session', {
+      method: 'POST',
+    })
+            .then(response => response.json())
+            .then(session => {
+              return stripe.redirectToCheckout({ sessionId: session.id });
+            })
+            .then(result => {
+              if (result.error) {
+                alert(result.error.message);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+  });
+</script>
+</body>
+</html>
